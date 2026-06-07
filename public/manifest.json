@@ -1,0 +1,21 @@
+{
+  "short_name": "Light Math",
+  "name": "Light Math: Kids' Learning Adventure",
+  "icons": [
+    {
+      "src": "/src/assets/images/light_math_icon_1780819415933.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/src/assets/images/light_math_icon_1780819415933.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#020617",
+  "theme_color": "#6366f1",
+  "display": "standalone",
+  "orientation": "portrait"
+}
