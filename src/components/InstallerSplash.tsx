@@ -137,7 +137,7 @@ export const InstallerSplash: React.FC<InstallerSplashProps> = ({ onComplete, la
           <div className="relative shrink-0">
             <div className="absolute inset-0 bg-indigo-500 rounded-3xl blur-md opacity-45 animate-pulse" />
             <img
-              src="/src/assets/images/light_math_icon_1780819415933.png"
+              src="/light_math_icon_1780819415933.png"
               alt="Light Math Logo"
               referrerPolicy="no-referrer"
               className="w-20 h-20 md:w-24 md:h-24 rounded-[1.75rem] border border-indigo-400 relative z-10 shadow-lg object-cover"

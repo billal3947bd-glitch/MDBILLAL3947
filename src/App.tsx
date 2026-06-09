@@ -14,6 +14,7 @@ import { LeaderboardsScreen } from "./components/LeaderboardsScreen";
 import { StoreScreen } from "./components/StoreScreen";
 import { SettingsModal } from "./components/SettingsModal";
 import { InstallerSplash } from "./components/InstallerSplash";
+import { AppSplash } from "./components/AppSplash";
 import { startBackgroundMusic, playClickSound } from "./utils/soundEffects";
 import { LanguageCode } from "./utils/translations";
 import { Settings } from "lucide-react";
@@ -22,6 +23,9 @@ import { updateDailyMissionsOnGameEnd } from "./utils/missions";
 export default function App() {
   const [currentStage, setCurrentStage] = useState<GameStage>(GameStage.START);
   const [showSettings, setShowSettings] = useState(false);
+  
+  // Show beautiful boot splash screen on every app launch/refresh
+  const [showBootSplash, setShowBootSplash] = useState(true);
   
   // Game Language reactive state
   const [lang, setLang] = useState<LanguageCode>(() => {
@@ -37,6 +41,21 @@ export default function App() {
   const [playerName, setPlayerName] = useState("PLAYER 1");
   const [selectedCharId, setSelectedCharId] = useState("mr-smart");
   const [selectedOperation, setSelectedOperation] = useState<OperationType>(OperationType.ADDITION);
+
+  // Track browser install prompt for PWA installation
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      console.log("Captured 'beforeinstallprompt' download trigger!");
+    };
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    };
+  }, []);
 
   // Results State
   const [finalScore, setFinalScore] = useState(0);
@@ -80,6 +99,15 @@ export default function App() {
     // Retain configuration, just boot straight to the math grid
     setCurrentStage(GameStage.GAMEPLAY);
   };
+
+  if (showBootSplash) {
+    return (
+      <AppSplash
+        onComplete={() => setShowBootSplash(false)}
+        lang={lang}
+      />
+    );
+  }
 
   if (!hasInitialized) {
     return (
@@ -184,6 +212,8 @@ export default function App() {
                 setSelectedCharId={setSelectedCharId}
                 onNavigate={setCurrentStage}
                 onOpenSettings={() => setShowSettings(true)}
+                deferredPrompt={deferredPrompt}
+                setDeferredPrompt={setDeferredPrompt}
               />
             </motion.div>
           )}

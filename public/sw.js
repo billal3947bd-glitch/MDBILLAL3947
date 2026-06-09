@@ -7,7 +7,7 @@ const CACHE_NAME = "light-math-cache-v1";
 const ASSETS = [
   "/",
   "/index.html",
-  "/src/assets/images/light_math_icon_1780819415933.png"
+  "/light_math_icon_1780819415933.png"
 ];
 
 self.addEventListener("install", (e) => {

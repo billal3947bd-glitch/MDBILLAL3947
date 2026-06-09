@@ -1,5 +1,6 @@
 {
   "name": "Light Math",
-  "description": "An interactive math quiz game for kids featuring cute characters, multiple operations, score tracking, and local leaderboards.",
+  "description": "Kids' math learning adventure game.",
+  "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

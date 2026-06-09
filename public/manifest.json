@@ -1,19 +1,24 @@
 {
   "short_name": "Light Math",
   "name": "Light Math: Kids' Learning Adventure",
+  "id": "/",
+  "scope": "/",
+  "description": "Kids' math learning adventure game.",
   "icons": [
     {
-      "src": "/src/assets/images/light_math_icon_1780819415933.png",
+      "src": "/light_math_icon_1780819415933.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
-      "src": "/src/assets/images/light_math_icon_1780819415933.png",
+      "src": "/light_math_icon_1780819415933.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": "/",
+  "start_url": "/?utm_source=standalone",
   "background_color": "#020617",
   "theme_color": "#6366f1",
   "display": "standalone",

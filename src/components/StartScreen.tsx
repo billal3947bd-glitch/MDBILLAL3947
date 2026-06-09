@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Trophy, ChevronLeft, ChevronRight, Play, Sparkles, User, ShoppingBag, Settings, Flame, Coins, Calendar, CheckCircle2, Target } from "lucide-react";
+import { Trophy, ChevronLeft, ChevronRight, Play, Sparkles, User, ShoppingBag, Settings, Flame, Coins, Calendar, CheckCircle2, Target, Download, Laptop, Smartphone, X } from "lucide-react";
 import { Avatar, CHARACTERS_LIST } from "./Avatars";
 import { GameStage } from "../types";
 import { CheeringMonkey } from "./CheeringMonkey";
@@ -20,6 +20,8 @@ interface StartScreenProps {
   setSelectedCharId: (id: string) => void;
   onNavigate: (stage: GameStage) => void;
   onOpenSettings: () => void;
+  deferredPrompt?: any;
+  setDeferredPrompt?: (prompt: any) => void;
 }
 
 export const StartScreen: React.FC<StartScreenProps> = ({
@@ -29,7 +31,10 @@ export const StartScreen: React.FC<StartScreenProps> = ({
   setSelectedCharId,
   onNavigate,
   onOpenSettings,
+  deferredPrompt,
+  setDeferredPrompt,
 }) => {
+  const [showInstallModal, setShowInstallModal] = useState(false);
   const [coins, setCoins] = useState(() => {
     return parseInt(localStorage.getItem("math_coins") || "100", 10);
   });
@@ -243,7 +248,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({
             className="mb-4 w-24 h-24 rounded-3xl overflow-hidden border-2 border-indigo-500/50 shadow-[0_0_30px_rgba(99,102,241,0.45)] relative flex items-center justify-center bg-slate-950"
           >
             <img
-              src="/src/assets/images/light_math_icon_1780819415933.png"
+              src="/light_math_icon_1780819415933.png"
               alt="Light Math Icon"
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
@@ -598,6 +603,35 @@ export const StartScreen: React.FC<StartScreenProps> = ({
             {getTranslation("leaderboard")}
           </motion.button>
 
+          {/* Beautiful Install PWA Button */}
+          <motion.button
+            whileHover={{ y: -3, scale: 1.02 }}
+            whileTap={{ y: 2 }}
+            onClick={async () => {
+              playClickSound();
+              if (deferredPrompt) {
+                try {
+                  deferredPrompt.prompt();
+                  const { outcome } = await deferredPrompt.userChoice;
+                  console.log(`User choice outcome: ${outcome}`);
+                  if (outcome === "accepted") {
+                    setDeferredPrompt?.(null);
+                  }
+                } catch (err) {
+                  console.error("Installation prompting failed:", err);
+                  setShowInstallModal(true);
+                }
+              } else {
+                setShowInstallModal(true);
+              }
+            }}
+            className="w-full bg-gradient-to-r from-indigo-500 to-fuchsia-600 hover:from-indigo-400 hover:to-fuchsia-500 font-extrabold text-white text-xs tracking-widest uppercase border-b-6 border-indigo-800 active:border-b-2 rounded-2xl py-2.5 shadow-[0_4px_14px_rgba(99,102,241,0.3)] flex items-center justify-center gap-2 transition-all cursor-pointer"
+            id="btn-install-pwa"
+          >
+            <Download size={13} className="text-white animate-bounce" />
+            <span>Install Game / অ্যাপ নামিয়ে নিন</span>
+          </motion.button>
+
           {/* Settings Command Panel - Sleek direct access trigger layout */}
           <motion.button
             whileHover={{ y: -3, scale: 1.02 }}
@@ -676,6 +710,132 @@ export const StartScreen: React.FC<StartScreenProps> = ({
                 YAY! awesome
               </button>
             </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Dynamic Interactive Installation Guide Modal */}
+        <AnimatePresence>
+          {showInstallModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 15 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 15 }}
+                className="relative w-full max-w-md md:max-w-xl bg-slate-900 border-2 border-indigo-500/30 rounded-3xl p-6 text-slate-100 shadow-[0_0_40px_rgba(99,102,241,0.25)] overflow-hidden"
+                id="modal-install-guide"
+              >
+                {/* Glowing neon top decoration */}
+                <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-cyan-500 via-indigo-500 to-fuchsia-500" />
+
+                {/* Close Button */}
+                <button
+                  onClick={() => {
+                    playClickSound();
+                    setShowInstallModal(false);
+                  }}
+                  className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full cursor-pointer transition-colors"
+                  aria-label="Close modal"
+                  id="btn-close-install-modal"
+                >
+                  <X size={20} />
+                </button>
+
+                {/* Brand Icon & Heading */}
+                <div className="flex flex-col items-center text-center mt-2 mb-6">
+                  <div className="relative w-16 h-16 rounded-2xl overflow-hidden border-2 border-indigo-500/50 shadow-lg mb-3">
+                    <img
+                      src="/light_math_icon_1780819415933.png"
+                      alt="Light Math Icon"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h3 className="text-xl font-extrabold tracking-wider text-white uppercase font-sans">
+                    Download Light Math App
+                  </h3>
+                  <p className="text-xs font-bold text-cyan-400 uppercase tracking-widest mt-0.5">
+                    ফোনে ও কম্পিউটারে সরাসরি ইনস্টল করুন
+                  </p>
+                </div>
+
+                {/* Grid for Windows Computer vs Mobile Devices */}
+                <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+                  
+                  {/* Option 1: Desktop/Laptop */}
+                  <div className="bg-slate-950/50 hover:bg-slate-950/70 border border-slate-800/80 rounded-2xl p-4 transition-all">
+                    <div className="flex items-center gap-2 mb-2 pb-1.5 border-b border-slate-800">
+                      <div className="p-1.5 bg-indigo-500/10 rounded-lg text-indigo-400">
+                        <Laptop size={16} />
+                      </div>
+                      <span className="text-[11px] font-black tracking-widest text-[#818cf8] uppercase">
+                        💻 FOR WINDOWS PC / COMPUTER
+                      </span>
+                    </div>
+                    
+                    <div className="text-xs space-y-1.5 text-slate-300 leading-relaxed font-semibold">
+                      <p>
+                        <strong className="text-white">English:</strong> Look at your browser's search/address bar at the very top. Click the <span className="text-indigo-400 font-extrabold font-mono">Install 🖥️📥 symbol</span> (or ⊕ icon), then press <strong className="text-indigo-300">"Install"</strong> to save this game on your Desktop screen!
+                      </p>
+                      <p className="border-t border-dashed border-slate-800/50 pt-1.5">
+                        <strong className="text-white">বাংলা:</strong> ব্রাউজারের সবচেয়ে উপরে অ্যাড্রেস বারের ডান পাশে থাকা <span className="text-indigo-400 font-extrabold font-mono">ইনস্টল বাটনটি (🖥️📥 বা ⊕)</span> চাপুন, এরপর <strong className="text-indigo-300">"Install"</strong> চাপলে এটি আপনার কম্পিউটার স্ক্রিনে আইকনসহ যুক্ত হয়ে যাবে!
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Option 2: Android and iOS Mobile Devices */}
+                  <div className="bg-slate-950/50 hover:bg-slate-950/70 border border-slate-800/80 rounded-2xl p-4 transition-all">
+                    <div className="flex items-center gap-2 mb-2 pb-1.5 border-b border-slate-800">
+                      <div className="p-1.5 bg-fuchsia-500/10 rounded-lg text-fuchsia-400">
+                        <Smartphone size={16} />
+                      </div>
+                      <span className="text-[11px] font-black tracking-widest text-[#f472b6] uppercase">
+                        📱 FOR MOBILES & TABLETS (ANDROID / IPHONE)
+                      </span>
+                    </div>
+
+                    <div className="text-xs space-y-4 text-slate-300 leading-relaxed font-semibold">
+                      
+                      {/* iOS Safari */}
+                      <div>
+                        <div className="text-[10px] text-fuchsia-300 font-bold tracking-wider uppercase mb-1">🍎 APPLE IPHONE / IPAD (SAFARI):</div>
+                        <p>
+                          <strong className="text-white">English:</strong> Tap the <strong className="text-fuchsia-300">Share button (📤)</strong> at the bottom of Safari, scroll down, and select <strong className="text-fuchsia-300">"Add to Home Screen"</strong>.
+                        </p>
+                        <p className="text-[11px] text-slate-400">
+                          <strong>বাংলা:</strong> সাফারি ব্রাউজারের নিচে থাকা <strong className="text-fuchsia-300">শেয়ার বোতামটি (📤)</strong> চাপুন, নিচে স্ক্রল করে <strong className="text-fuchsia-300">"Add to Home Screen"</strong> বেছে নিন।
+                        </p>
+                      </div>
+
+                      {/* Android Chrome */}
+                      <div className="border-t border-slate-800 pt-2.5">
+                        <div className="text-[10px] text-emerald-400 font-bold tracking-wider uppercase mb-1">🤖 ANDROID (CHROME):</div>
+                        <p>
+                          <strong className="text-white">English:</strong> Tap the <strong className="text-emerald-400">three-dots menu (⋮)</strong>, then tap <strong className="text-emerald-400">"Install App"</strong> or <strong className="text-emerald-400">"Add to Home screen"</strong>.
+                        </p>
+                        <p className="text-[11px] text-slate-400">
+                          <strong>বাংলা:</strong> ব্রাউজারের উপরে ডানদিকে <strong className="text-emerald-400">তিনটি বিন্দুতে (⋮)</strong> চাপুন এবং <strong className="text-emerald-400">"Install App"</strong> বা <strong>"Add to Home screen"</strong>-এ ট্যাপ করুন।
+                        </p>
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Close Button below */}
+                <div className="mt-6 flex justify-end">
+                  <button
+                    onClick={() => {
+                      playClickSound();
+                      setShowInstallModal(false);
+                    }}
+                    className="bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs py-2 px-6 tracking-widest uppercase rounded-xl shadow-md transition-all cursor-pointer"
+                  >
+                    Got It / বুঝেছি
+                  </button>
+                </div>
+
+              </motion.div>
+            </div>
           )}
         </AnimatePresence>
       </motion.div>

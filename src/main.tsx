@@ -3,8 +3,8 @@ import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 
-// Register PWA service worker for mobile installability
-if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
+// Register PWA service worker for mobile and desktop installability
+if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register("/sw.js")
